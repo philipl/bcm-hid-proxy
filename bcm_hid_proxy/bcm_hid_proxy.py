@@ -19,11 +19,12 @@ VSC_RemoveHIDDevice = 0x39
 VSC_EnableUSBHIDEmulation = 0x3B
 
 
-def hci_devba(sock: socket) -> bytes:
+def hci_devba(hci_id:int, sock: socket) -> bytes:
     # The size of the hci_dev_info struct is not fully defined.
     # It's 89 with no padding, and observed to be 92 on one system, so rounding
     # up.
     req = bytearray(128)
+    struct.pack_into('H', req, 0, hci_id)
     fcntl.ioctl(sock, bluez.HCIGETDEVINFO, req)
     response = struct.unpack_from('H8s6sIb8b3I4H10I', req)
     return response[2]
@@ -86,7 +87,6 @@ def remove_hid_device(hci_id: int, address: str):
 def set_hid_proxy_mode(hci_id: int, mode: bool):
     sock: socket = bluez.hci_open_dev(hci_id)
     try:
-        print(mode)
         bmode: bytes = mode.to_bytes()
 
         bluez.hci_send_req(sock, bluez.OGF_VENDOR_CMD, VSC_EnableUSBHIDEmulation,
@@ -98,7 +98,7 @@ def set_hid_proxy_mode(hci_id: int, mode: bool):
 def get_system_link_key(hci_id: int, hid_addr: str) -> str:
     sock: socket = bluez.hci_open_dev(hci_id)
     try:
-        baddr = hci_devba(sock)
+        baddr = hci_devba(hci_id, sock)
         hci_addr = bluez.ba2str(baddr)
         info_path = os.path.join('/var/lib/bluetooth', hci_addr, hid_addr, 'info')
         if os.path.exists(info_path):
