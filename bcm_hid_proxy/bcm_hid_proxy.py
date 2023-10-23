@@ -19,7 +19,7 @@ VSC_RemoveHIDDevice = 0x39
 VSC_EnableUSBHIDEmulation = 0x3B
 
 
-def hci_devba(hci_id:int, sock: socket) -> bytes:
+def hci_devba(hci_id: int, sock: socket) -> bytes:
     # The size of the hci_dev_info struct is not fully defined.
     # It's 89 with no padding, and observed to be 92 on one system, so rounding
     # up.
@@ -46,9 +46,9 @@ def list_hid_devices(hci_id: int):
         # But it's way easier to extract the checksum by abusing the presence
         # of the padding byte to read a 32bit integer
         num_entries = 0
-        entries: Iterator = struct.iter_unpack('<6sI', response[2:])
+        entries: Iterator[tuple[bytes, int]] = struct.iter_unpack('<6sI', response[2:])
         for entry in entries:
-            addr = bluez.ba2str(entry[0])
+            addr: str = bluez.ba2str(entry[0])
             num_entries += 1
             print('%s: 0x%06X' % (addr, entry[1]))
 
@@ -114,22 +114,22 @@ def get_system_link_key(hci_id: int, hid_addr: str) -> str:
         sock.close()
 
 
-def do_list(args):
+def do_list(args: argparse.Namespace):
     list_hid_devices(args.device)
 
 
-def do_add(args):
+def do_add(args: argparse.Namespace):
     link_key: str = args.link_key
     if (args.system_settings):
         link_key = get_system_link_key(args.device, args.address)
     add_hid_device(args.device, args.address, link_key)
 
 
-def do_remove(args):
+def do_remove(args: argparse.Namespace):
     remove_hid_device(args.device, args.address)
 
 
-def do_set_proxy_mode(args):
+def do_set_proxy_mode(args: argparse.Namespace):
     mode = args.active == 'on'
     set_hid_proxy_mode(args.device, mode)
 
