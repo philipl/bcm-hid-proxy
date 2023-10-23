@@ -1,0 +1,16 @@
+[Unit]
+Description=Add keyboard to HID Proxy configuration
+DefaultDependencies=no
+After=bluetooth.service
+
+[Service]
+Type=oneshot
+User=root
+# Set the appropriate values here:
+# 1. Path to script (default is what pipx will install)
+# 2. HID Proxy controller bluetooth address
+# 3. Keyboard bluetooth address
+ExecStart=/root/.local/bin/bcm-hid-proxy -i AA:BB:CC:DD:EE:FF add -a FF:EE:DD:CC:BB:AA -s
+
+[Install]
+WantedBy=default.target

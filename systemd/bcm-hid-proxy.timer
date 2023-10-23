@@ -1,0 +1,13 @@
+[Unit]
+Description=Delay timer for HID Proxy Configuration
+DefaultDependencies=no
+After=bluetooth.service
+
+[Install]
+# List the possible hciX device addresses for your system.
+# Usually it will be hci0 and hci1 - the built-in device plus the extra HID proxy device.
+WantedBy=default.target sleep.target sys-subsystem-bluetooth-devices-hci0.device sys-subsystem-bluetooth-devices-hci1.device
+
+[Timer]
+RemainAfterElapse=false
+OnActiveSec=15
