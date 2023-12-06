@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bcm-hid-proxy"
+version = "0.1"
+keywords = ["bluetooth hid proxy bcm2046"]
+description = "A tool to control the HID Proxy configuration of Broadcom BCM2046 Bluetooth controllers"
+authors = [{name = "Philip Langdale", email = "philipl@overt.org"}]
+license = {text = "MIT"}
+urls = {Homepage = "https://github.com/philipl/bcm-hid-proxy"}
+dependencies = [
+    "pybluez >= 0.23",
+    "crccheck >= 1.0",
+]
+
+[project.scripts]
+bcm-hid-proxy = "bcm_hid_proxy.bcm_hid_proxy:main"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages]
+find = {namespaces = false}
